@@ -6,10 +6,10 @@
 (define die1 0)
 (define die2 0)
 (define turn-number 1)
+(define took-turn #f)
 
 (define (start-game)
   (set! tiles '(1 2 3 4 5 6 7 8 9)))
-
 
 (define (dice)
   (+ 1 (random 6)))
@@ -24,14 +24,23 @@
 (define (sum-of-tiles tilelist)
   (apply + tilelist))
 
-(define (check-roll dice-sum tile-sum)
-  (= dice-sum tile-sum))
+(define (list-check l1 l2)
+  (andmap (lambda (x) (not (boolean? (memq x l2)))) l1))
 
 (define (shut-tiles tilelist)
-  (for ([i tilelist])
-       (if (index-of tiles i)
-         (set! tiles (remove i tiles))
-         (print "Tile already shut"))))
+  (if (not took-turn) 
+    (if (list-check tilelist tiles)
+      (for ([i tilelist])
+          (if (index-of tiles i)
+              (begin
+               (set! tiles (remove i tiles))
+               (set! took-turn #t))
+              (error "Tile already shut")))
+    (error "Tile not available to be shut"))
+  (error "Already took your turn")))
+
+(define (check-roll dice-sum tile-sum)
+  (= dice-sum tile-sum))
 
 (define (player-turn tilelist)
   (if (check-roll (sum-of-dice) (sum-of-tiles tilelist))
@@ -43,6 +52,7 @@
 
 (define (next-turn)
   (set! turn-number (+ 1 turn-number))
+  (set! took-turn #f)
   (dice-roll)
   (show-turn))
 
