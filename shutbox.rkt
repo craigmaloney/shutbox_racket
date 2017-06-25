@@ -7,6 +7,7 @@
 (define die2 0)
 (define turn-number 1)
 (define took-turn #f)
+(define end-of-game #f)
 
 (define (start-game)
   (set! tiles '(1 2 3 4 5 6 7 8 9)))
@@ -36,8 +37,8 @@
                (set! tiles (remove i tiles))
                (set! took-turn #t))
               (error "Tile already shut")))
-    (error "Tile not available to be shut"))
-  (error "Already took your turn")))
+    (println "Tile not available to be shut"))
+  (println "Already took your turn")))
 
 (define (check-roll dice-sum tile-sum)
   (= dice-sum tile-sum))
@@ -45,10 +46,16 @@
 (define (player-turn tilelist)
   (if (check-roll (sum-of-dice) (sum-of-tiles tilelist))
       (shut-tiles tilelist)
-      (print "Roll does not equal shut tiles. Try again.")))
+      (println "Roll does not equal shut tiles. Try again.")))
   
-(start-game)
-(dice-roll)
+(define (my-read-line)
+  (let ([contents (read-line)])
+    (if (string=? contents "")
+      (read-line)
+      contents)))
+
+(define (input) 
+  (map string->number (string-split (my-read-line))))
 
 (define (next-turn)
   (set! turn-number (+ 1 turn-number))
@@ -60,4 +67,15 @@
   (printf "Turn: ")
   (println turn-number)
   (println tiles)
-  (printf "Dice roll ~v ~v = ~v" die1 die2 (sum-of-dice) ))
+  (printf "Dice roll ~v ~v = ~v\n" die1 die2 (sum-of-dice) ))
+
+(start-game)
+(dice-roll)
+(let loop()
+  
+  (show-turn)
+  (define tilelist (input))
+  (player-turn tilelist)
+  (next-turn)
+  (when (not end-of-game) (loop))
+  )
