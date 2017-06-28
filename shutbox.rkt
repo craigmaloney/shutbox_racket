@@ -69,28 +69,21 @@
   (println tiles)
   (printf "Dice roll ~v ~v = ~v\n" die1 die2 (sum-of-dice) ))
 
+(define (tile-combinations sum)
+  (filter (lambda (x) (eq? (apply + x) sum)) (cdr ( combinations tiles))))
+
 (define (end-of-game-test sum)
-  (println sum)
-  (cond [
-         [(zero? sum) #t]
-    (
-       (println "continue")
-       (define last-tile (filter (lambda (x) (<= x sum)) tiles))
-       (cond [(empty? last-tile) #f]
-             [(cond [(end-of-game-test(- sum (last last-tile))) #t])]
-       )
-     )
-    )
-  )
+  (let ((combinations (tile-combinations sum))) 
+    (println combinations)
+    (empty? combinations)
+    ))
 
 #| Main Loop |#
 (start-game)
 (dice-roll)
 (let loop()
   (show-turn)
-  (define end-of-game-flag (end-of-game-test(sum-of-dice)))
-  (println end-of-game-flag)
   (define tilelist (input))
   (player-turn tilelist)
   (next-turn)  
-  (when (not end-of-game) (loop)))
+  (when (not (end-of-game-test (sum-of-dice))) (loop)))
