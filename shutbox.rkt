@@ -85,5 +85,6 @@
   (show-turn)
   (define tilelist (input))
   (player-turn tilelist)
-  (next-turn)  
+  (cond 
+    [took-turn (next-turn)])
   (when (not (end-of-game-test (sum-of-dice))) (loop)))
