@@ -88,3 +88,6 @@
   (cond 
     [took-turn (next-turn)])
   (when (not (end-of-game-test (sum-of-dice))) (loop)))
+(if (empty? tiles)
+  (println "Congratulations! You shut the box!")
+  (println "No more moves available. Try again?"))
